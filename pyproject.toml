@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "web-notes"
+version = "0.1.0"
+description = "This is Project for Making Notes"
+authors = ["Madjar Evan <evanmadjar@gmail.com>"]
+readme = "README.md"
+packages = [{include = "web_notes"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
