@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
+from markdownx import urls as markdownx_urls
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from .yasg import info
@@ -17,6 +18,7 @@ API_PREFIX = 'api/v1'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('markdownx/', include(markdownx_urls)),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.jwt')),
 ]

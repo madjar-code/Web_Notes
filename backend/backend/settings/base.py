@@ -35,6 +35,7 @@ THIRD_PART_APPS = [
     'corsheaders',
     'drf_yasg',
     'djoser',
+    'markdownx',
 ]
 
 LOCAL_APPS = [
