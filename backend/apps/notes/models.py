@@ -14,6 +14,7 @@ class Note(BaseModel):
         to='Folder',
         blank=True,
         null=True,
+        related_name='notes',
         on_delete=models.CASCADE,
     )
     owner = models.ForeignKey(
