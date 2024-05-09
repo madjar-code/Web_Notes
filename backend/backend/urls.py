@@ -19,8 +19,11 @@ API_PREFIX = 'api/v1'
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('markdownx/', include(markdownx_urls)),
-    path('auth/', include('djoser.urls')),
-    path('auth/', include('djoser.urls.jwt')),
+
+    path(f'{API_PREFIX}/auth/', include('djoser.urls')),
+    path(f'{API_PREFIX}/auth/', include('djoser.urls.jwt')),
+
+    path(f'{API_PREFIX}/notes/', include('notes.api.urls')),
 ]
 
 if settings.DEBUG:
