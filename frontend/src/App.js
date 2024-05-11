@@ -8,12 +8,6 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import ResetPassword from "./pages/ResetPassword";
 import ResetPasswordConfirm from "./pages/ResetPasswordConfirm";
-// import Home from "./containers/Home";
-// import Login from "./containers/Login";
-// import Signup from "./containers/Signup";
-// import Activate from "./containers/Activate";
-// import ResetPassword from "./containers/ResetPassword";
-// import ResetPasswordConfirm from "./containers/ResetPasswordConfirm";
 
 import './App.css'
 
