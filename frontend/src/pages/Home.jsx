@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Circles } from 'react-loader-spinner'
 import * as S from './Home.styled'
 import CreateNoteIcon from '../assets/icons/CreateNoteIcon.svg'
 import CreateFolderIcon from '../assets/icons/CreateFolderIcon.svg'
@@ -88,9 +88,9 @@ const TreeMenu = ({
           <S.CreateFolderIcon src={CreateFolderIcon}/>
         </S.CreateFolderButton>
       </S.ButtonWrapper>
-      <S.MenuTitle>NOTE NETWORKS</S.MenuTitle>
+      <S.MenuTitle>{data?.title}</S.MenuTitle>
       <S.NotesFoldersBlock>
-        {data.map(node => (
+        {data?.children?.map(node => (
           <TreeNode
             key={node.id}
             node={node}
@@ -113,52 +113,40 @@ const TreeMenu = ({
   );
 };
 
-const data = [
-  {
-    id: '1',
-    title: 'Folder 1',
-
-    children: [
-      {
-        id: '2',
-        title: 'File 1',
-        description: 'Description 1'
-      },
-      {
-        id: '3',
-        title: 'File 2',
-        description: 'Description 2'
-      }
-    ]
-  },
-  {
-    id: '4',
-    title: 'Folder 2',
-    children: [
-      {
-        id: '5',
-        title: 'Subfolder 1',
-        children: [
-          {
-            id: '6',
-            title: 'File 3',
-            description: 'Description 3'
-          },
-          {
-            id: '7',
-            title: 'File 4',
-            description: 'Description 4'
-          }
-        ]
-      }
-    ]
-  }
-];
 
 const Home = () => {
   const [width, setWidth] = useState(310)
+  const [data, setData] = useState({})
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState(null)
   const minWidth = 20
   const maxWidth = 500
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true)
+      setError(null)
+
+      try {
+        const response = await fetch(
+          '/api/v1/notes/1a1614f4-561b-4df6-9c2d-82c160af3740', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          }
+        )
+        let data = await response.json()
+        setData(data)
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setError(error.message)
+      } finally {
+        setTimeout(() => setIsLoading(false), 1000)
+      }
+    }
+    fetchData()
+  }, [])
 
   const handleWidthChange = (newWidth) => {
     setWidth(newWidth)
@@ -180,30 +168,52 @@ const Home = () => {
   }
 
   return (
-    <S.Container>
-      <TreeMenu
-        width={width}
-        minWidth={minWidth}
-        maxWidth={maxWidth}
-        onWidthChange={handleWidthChange}
-        data={data}
-        onSelect={handleNoteSelect}
-      />
-      {
-        selectedNote && (
-          <S.NoteDetailsBlock>
-            <S.NoteDetailsWrapper>
-              <S.TitleForm value={selectedNote.title}/>
-              <S.DescriptionForm
-                placeholder='Enter your text...'
-                value={selectedNote.description}
-                onChange={handleDescriptionChange}
-              />
-            </S.NoteDetailsWrapper>
-          </S.NoteDetailsBlock>
-        )
-      }
-    </S.Container>
+    <>
+      {isLoading ? (
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          backgroundColor: 'rgba(0, 0, 0, 1)',
+          opacity: '0.2',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <Circles color="#DDDDDD" size={50}/>
+      </div>
+     ) : (
+      <S.Container>
+        <TreeMenu
+          width={width}
+          minWidth={minWidth}
+          maxWidth={maxWidth}
+          onWidthChange={handleWidthChange}
+          data={data}
+          onSelect={handleNoteSelect}
+        />
+        {
+          selectedNote && (
+            <S.NoteDetailsBlock>
+              <S.NoteDetailsWrapper>
+                <S.TitleForm value={selectedNote.title}/>
+                <S.DescriptionForm
+                  placeholder='Enter your text...'
+                  value={selectedNote.description}
+                  onChange={handleDescriptionChange}
+                />
+              </S.NoteDetailsWrapper>
+            </S.NoteDetailsBlock>
+          )
+        }
+      </S.Container>
+     )
+    }
+  </>
   )
 }
 
