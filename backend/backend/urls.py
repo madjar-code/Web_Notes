@@ -17,12 +17,17 @@ schema_view = get_schema_view(
 API_PREFIX = 'api/v1'
 
 urlpatterns = [
+    # Admin
     path('admin/', admin.site.urls),
+
+    # Markdown
     path('markdownx/', include(markdownx_urls)),
 
+    # Authentication
     path(f'{API_PREFIX}/auth/', include('djoser.urls')),
     path(f'{API_PREFIX}/auth/', include('djoser.urls.jwt')),
 
+    # Apps
     path(f'{API_PREFIX}/notes/', include('notes.api.urls')),
 ]
 
