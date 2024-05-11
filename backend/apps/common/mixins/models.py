@@ -1,5 +1,6 @@
 import uuid
 from django.db import models
+from django.db.models import Manager
 from .managers import SoftDeletionManager
 
 
@@ -9,7 +10,7 @@ class SoftDeletionModel(models.Model):
     """
     is_active = models.BooleanField(default=True)
 
-    objects = SoftDeletionManager()
+    objects = Manager()
     active_objects = SoftDeletionManager()
 
     class Meta:
