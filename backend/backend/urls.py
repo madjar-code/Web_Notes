@@ -28,7 +28,7 @@ urlpatterns = [
     path(f'{API_PREFIX}/auth/', include('djoser.urls.jwt')),
 
     # Apps
-    path(f'{API_PREFIX}/notes/', include('notes.api.urls')),
+    path(f'{API_PREFIX}/', include('notes.api.urls')),
 ]
 
 if settings.DEBUG:
