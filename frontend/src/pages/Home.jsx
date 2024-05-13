@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Circles } from 'react-loader-spinner'
 import * as S from './Home.styled'
 import CreateNoteIcon from '../assets/icons/CreateNoteIcon.svg'
@@ -40,10 +40,28 @@ const TreeMenu = ({
     minWidth,
     maxWidth,
     onWidthChange,
+    handleCreateFolder,
     data,
     onSelect,
   }) => {
   const [isResizing, setIsResizing] = useState(false)
+  const [creatingFolder, setCreatingFolder] = useState(false)
+  const [newFolderName, setNewFolderName] = useState('')
+
+  const [creatingNote, setCreatingNote] = useState(false)
+  const [newNoteName, setNewNoteName] = useState('')
+
+  const newFolderInput = useRef()
+
+  const handleCreateFolderClick = () => {
+    setCreatingFolder(true)
+    setNewFolderName('Untitled')
+  }
+
+  const handleCreateNoteClick = () => {
+    setCreatingNote(true)
+    setNewNoteName('Untitled')
+  }
 
   const handleMouseDown = (event) => {
     setIsResizing(true)
@@ -78,13 +96,21 @@ const TreeMenu = ({
       handleMouseUp
     )
   }
+
+  const handleCreateFolderKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      setCreatingFolder(false)
+      setNewFolderName('')
+      handleCreateFolder(newFolderName)
+    }
+  }
   return (
     <S.TreeMenuBlock width={width}>
       <S.ButtonWrapper>
-        <S.CreateNoteButton>
+        <S.CreateNoteButton onClick={handleCreateNoteClick}>
           <S.CreateNoteIcon src={CreateNoteIcon}/>
         </S.CreateNoteButton>
-        <S.CreateFolderButton>
+        <S.CreateFolderButton onClick={handleCreateFolderClick}>
           <S.CreateFolderIcon src={CreateFolderIcon}/>
         </S.CreateFolderButton>
       </S.ButtonWrapper>
@@ -97,6 +123,16 @@ const TreeMenu = ({
             onSelect={onSelect}
           />
         ))}
+        {creatingFolder && (
+          <S.NewFolderInput
+            type="text"
+            value={newFolderName}
+            onChange={(e) => setNewFolderName(e.target.value)}
+            onKeyDown={handleCreateFolderKeyDown}
+            ref={newFolderInput}
+            onFocus={() => newFolderInput.current.select()}
+          />
+        )}
       </S.NotesFoldersBlock>
       <S.RightBorder
         isResizing={isResizing}
@@ -115,12 +151,59 @@ const TreeMenu = ({
 
 
 const Home = () => {
-  const [width, setWidth] = useState(310)
+  const [width, setWidth] = useState(260)
   const [data, setData] = useState({})
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
   const minWidth = 20
   const maxWidth = 500
+
+  const handleCreateFolder = async (newFolderName) => {
+    if (!newFolderName) return;
+
+    const newData = { ...data }
+    newData.children = newData.children || []
+
+    newData.children.push({
+      id: 'temporary',
+      title: newFolderName,
+      children: []
+    })
+    setData(newData)
+
+    try {
+      const response = await fetch(
+        '/api/v1/folders/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: newFolderName,
+            owner: null,
+            parent: data?.id
+          })
+        }
+      )
+      const createdFolder = await response.json()
+
+      const updatedData = { ...data }
+      const folderIndex = updatedData.children.findIndex(
+        child => child.id === 'temporary'
+      )
+      if (folderIndex > -1) {
+        updatedData.children[folderIndex] = {
+          ...createdFolder,
+          children: []
+        }
+        setData(updatedData)
+      } else {
+        console.error('Failed to update folder:', createdFolder)
+      }
+    } catch {
+      console.error('Error creating folder:', error)
+    }
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -193,6 +276,7 @@ const Home = () => {
           minWidth={minWidth}
           maxWidth={maxWidth}
           onWidthChange={handleWidthChange}
+          handleCreateFolder={handleCreateFolder}
           data={data}
           onSelect={handleNoteSelect}
         />

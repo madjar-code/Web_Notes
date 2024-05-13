@@ -73,7 +73,7 @@ export const CreateFolderIcon = styled.img`
 export const MenuTitle = styled.h4`
   margin-left: 15px;
   margin-top: 15px;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: var(--bold);
   color: #DDDDDD;
 `
@@ -83,6 +83,29 @@ export const NotesFoldersBlock = styled.div`
   margin-left: 5px;
 `
 
+export const NewFolderInput = styled.input`
+  /* cursor: pointer; */
+  width: 100%;
+  margin-top: 5px;
+  font-size: 14px;
+  font-weight: var(--medium);
+  padding: 5px;
+  padding-left: 10px;
+  background-color: #333333;
+  /* border: 2px solid #276DF1; */
+
+  transition: border 1s ease-in-out;
+  animation: border-in 1s forwards ease-in-out;
+
+  @keyframes border-in {
+      from {
+          border: 2px solid #333333;
+      }
+      to {
+          border: 2px solid #276DF1;
+      }
+  }
+`
 
 export const ItemWrapper = styled.div`
 `
