@@ -47,3 +47,15 @@ class FolderTreeSerializer(ModelSerializer):
         note_serializer = NoteTreeSerializer(notes, many=True)
 
         return folder_serializer.data + note_serializer.data
+
+
+class CreateFolderSerializer(ModelSerializer):
+    class Meta:
+        model = Folder
+        fields = (
+            'id',
+            'title',
+            'owner',
+            'parent',
+        )
+        read_only_fields = ('id',)
