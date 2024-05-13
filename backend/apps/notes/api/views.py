@@ -1,13 +1,19 @@
 from uuid import UUID
 from rest_framework import status
-from rest_framework.generics import RetrieveAPIView
+from rest_framework.generics import (
+    RetrieveAPIView,
+    CreateAPIView,
+)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from notes.models import Folder
-from .serializers import FolderTreeSerializer
+from .serializers import (
+    FolderTreeSerializer,
+    CreateFolderSerializer,
+)
 
 
 class FolderTreeView(RetrieveAPIView):
@@ -47,6 +53,21 @@ class FolderTreeView(RetrieveAPIView):
                 status.HTTP_404_NOT_FOUND
             )
         serializer: FolderTreeSerializer = self.serializer_class(folder)
+        return Response(
+            serializer.data,
+            status.HTTP_200_OK,
+        )
+
+
+class CreateFolderView(CreateAPIView):
+    serializer_class = CreateFolderSerializer
+    # permission_classes = (IsAuthenticated,)
+
+    @swagger_auto_schema(operation_id='create_folder')
+    def post(self, request: Request) -> Response:
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
         return Response(
             serializer.data,
             status.HTTP_200_OK,
