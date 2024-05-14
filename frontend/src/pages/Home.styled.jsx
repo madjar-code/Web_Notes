@@ -83,28 +83,46 @@ export const NotesFoldersBlock = styled.div`
   margin-left: 5px;
 `
 
+export const NewFolderWrapper = styled.div`
+  position: relative;
+  margin-top: 5px;
+`
+
+export const NewFolderRightArrow = styled.img`
+  position: absolute;
+  top: 10px;
+  left: 7px;
+  scale: 1.2;
+`
+
 export const NewFolderInput = styled.input`
   /* cursor: pointer; */
   width: 100%;
-  margin-top: 5px;
   font-size: 14px;
   font-weight: var(--medium);
   padding: 5px;
-  padding-left: 10px;
+  padding-left: 15px;
   background-color: #333333;
   /* border: 2px solid #276DF1; */
-
+  
   transition: border 1s ease-in-out;
   animation: border-in 1s forwards ease-in-out;
-
+  
   @keyframes border-in {
-      from {
-          border: 2px solid #333333;
-      }
-      to {
-          border: 2px solid #276DF1;
-      }
+    from {
+      border: 2px solid #333333;
+    }
+    to {
+      border: 2px solid #276DF1;
+    }
   }
+`
+
+export const NewNoteWrapper = styled.div`
+  margin-top: 10px;
+`
+
+export const NewNoteInput = styled(NewFolderInput)`
 `
 
 export const ItemWrapper = styled.div`
@@ -117,11 +135,23 @@ export const ParentItem = styled.div`
   font-weight: var(--medium);
   transition: background-color 0.3s ease;
   padding: 5px;
-  padding-left: 10px;
-
+  padding-left: 15px;
+  position: relative;
+  
   &:hover {
     background-color: #333333;
   }
+`
+
+export const RightArrow = styled.img`
+  position: absolute;
+  top: 9px;
+  left: 5px;
+`
+
+export const DownArrow = styled(RightArrow)`
+  top: 11px;
+  left: 2px;
 `
 
 export const ChildBlock = styled.div`

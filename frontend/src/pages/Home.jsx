@@ -4,6 +4,9 @@ import * as S from './Home.styled'
 import CreateNoteIcon from '../assets/icons/CreateNoteIcon.svg'
 import CreateFolderIcon from '../assets/icons/CreateFolderIcon.svg'
 
+import RightArrowIcon from '../assets/icons/RightArrowIcon.svg'
+import DownArrowIcon from '../assets/icons/DownArrowIcon.svg'
+
 
 const TreeNode = ({ node, onSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,8 +22,17 @@ const TreeNode = ({ node, onSelect }) => {
     <>
       <S.ItemWrapper>
         <S.ParentItem onClick={toggleOpen}>
+          {
+            node.children && <>
+            {
+              isOpen
+                ? <S.DownArrow src={DownArrowIcon}/>
+                : <S.RightArrow src={RightArrowIcon}/>
+            }
+            </>
+          }
           {node.title}
-          {node.children && <span>{isOpen ? '-' : '+'}</span>}
+          {/* {node.children && <span>{isOpen ? '-' : '+'}</span>} */}
         </S.ParentItem>
       </S.ItemWrapper>
       {isOpen && node.children && (
@@ -41,6 +53,7 @@ const TreeMenu = ({
     maxWidth,
     onWidthChange,
     handleCreateFolder,
+    handleCreateNote,
     data,
     onSelect,
   }) => {
@@ -62,6 +75,8 @@ const TreeMenu = ({
     setCreatingNote(true)
     setNewNoteName('Untitled')
   }
+
+  const newNoteInput = useRef()
 
   const handleMouseDown = (event) => {
     setIsResizing(true)
@@ -104,6 +119,16 @@ const TreeMenu = ({
       handleCreateFolder(newFolderName)
     }
   }
+
+  const handleCreateNoteKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      setCreatingNote(false)
+      setNewNoteName('')
+      handleCreateNote(newNoteName)
+    }
+  }
+
+
   return (
     <S.TreeMenuBlock width={width}>
       <S.ButtonWrapper>
@@ -124,14 +149,29 @@ const TreeMenu = ({
           />
         ))}
         {creatingFolder && (
-          <S.NewFolderInput
-            type="text"
-            value={newFolderName}
-            onChange={(e) => setNewFolderName(e.target.value)}
-            onKeyDown={handleCreateFolderKeyDown}
-            ref={newFolderInput}
-            onFocus={() => newFolderInput.current.select()}
-          />
+          <S.NewFolderWrapper>
+            <S.NewFolderRightArrow src={RightArrowIcon}/>
+            <S.NewFolderInput
+              type="text"
+              value={newFolderName}
+              onChange={(e) => setNewFolderName(e.target.value)}
+              onKeyDown={handleCreateFolderKeyDown}
+              ref={newFolderInput}
+              onFocus={() => newFolderInput.current.select()}
+            />
+          </S.NewFolderWrapper>
+        )}
+        {creatingNote && (
+          <S.NewNoteWrapper>
+            <S.NewNoteInput
+              type="text"
+              value={newNoteName}
+              onChange={(e) => setNewNoteName(e.target.value)}
+              onKeyDown={handleCreateNoteKeyDown}
+              ref={newNoteInput}
+              onFocus={() => newNoteInput.current.select()}
+            />
+          </S.NewNoteWrapper>
         )}
       </S.NotesFoldersBlock>
       <S.RightBorder
@@ -202,6 +242,53 @@ const Home = () => {
       }
     } catch {
       console.error('Error creating folder:', error)
+    }
+  }
+
+  const handleCreateNote = async (newNoteName) => {
+    if (!newNoteName) return;
+
+    const newData = { ...data }
+    newData.children = newData.children || []
+
+    newData.children.push({
+      id: 'temporary',
+      title: newNoteName,
+      children: []
+    })
+    setData(newData)
+
+    try {
+      const response = await fetch(
+        '/api/v1/notes/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: newNoteName,
+            owner: null,
+            folder: data?.id
+          })
+        }
+      )
+      const createdNote = await response.json()
+
+      const updatedData = { ...data }
+      const noteIndex = updatedData.children.findIndex(
+        child => child.id === 'temporary'
+      )
+      if (noteIndex > -1) {
+        updatedData.children[noteIndex] = {
+          ...createdNote,
+        }
+        setData(updatedData)
+        handleNoteSelect(createdNote)
+      } else {
+        console.error('Failed to update note:', createdNote)
+      }
+    } catch {
+      console.error('Error creating note:', error)
     }
   }
 
@@ -277,6 +364,7 @@ const Home = () => {
           maxWidth={maxWidth}
           onWidthChange={handleWidthChange}
           handleCreateFolder={handleCreateFolder}
+          handleCreateNote={handleCreateNote}
           data={data}
           onSelect={handleNoteSelect}
         />
