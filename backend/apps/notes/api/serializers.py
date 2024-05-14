@@ -59,3 +59,15 @@ class CreateFolderSerializer(ModelSerializer):
             'parent',
         )
         read_only_fields = ('id',)
+
+
+class CreateNoteSerializer(ModelSerializer):
+    class Meta:
+        model = Note
+        fields = (
+            'id',
+            'title',
+            'folder',
+            'owner',
+        )
+        read_only_fields = ('id',)

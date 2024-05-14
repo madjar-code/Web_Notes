@@ -13,6 +13,7 @@ from notes.models import Folder
 from .serializers import (
     FolderTreeSerializer,
     CreateFolderSerializer,
+    CreateNoteSerializer,
 )
 
 
@@ -64,6 +65,21 @@ class CreateFolderView(CreateAPIView):
     # permission_classes = (IsAuthenticated,)
 
     @swagger_auto_schema(operation_id='create_folder')
+    def post(self, request: Request) -> Response:
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(
+            serializer.data,
+            status.HTTP_200_OK,
+        )
+
+
+class CreateNoteView(CreateAPIView):
+    serializer_class = CreateNoteSerializer
+    # permission_classes = (IsAuthenticated,)
+
+    @swagger_auto_schema(operation_id='create_note')
     def post(self, request: Request) -> Response:
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
