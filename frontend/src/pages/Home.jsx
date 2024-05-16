@@ -1,14 +1,23 @@
 import { useState, useEffect, useRef } from "react";
 import { Circles } from 'react-loader-spinner'
+import ContextMenu from "../components/Home/ContextMenu";
+
 import * as S from './Home.styled'
 import CreateNoteIcon from '../assets/icons/CreateNoteIcon.svg'
 import CreateFolderIcon from '../assets/icons/CreateFolderIcon.svg'
-
 import RightArrowIcon from '../assets/icons/RightArrowIcon.svg'
-import DownArrowIcon from '../assets/icons/DownArrowIcon.svg'
+
+import DeleteIconIcon from '../assets/icons/DeleteIcon.svg'
+import NewTabIcon from '../assets/icons/NewTabIcon.svg'
+import RenameIcon from '../assets/icons/RenameIcon.svg'
 
 
-const TreeNode = ({ node, onSelect }) => {
+const TreeNode = ({
+  node,
+  onSelect,
+  handleOnContextMenu,
+  menuItemSelected
+}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleOpen = () => {
@@ -16,30 +25,39 @@ const TreeNode = ({ node, onSelect }) => {
     if (!node.children) {
       onSelect(node)
     }
+  }
+  const isSelected = menuItemSelected?.id === node.id
+
+  const arrowStyle = {
+    transform: isOpen ? 'rotate(90deg)' : 'rotate(0deg)',
+    transition: 'transform 0.3s ease-in-out',
   };
 
   return (
     <>
       <S.ItemWrapper>
-        <S.ParentItem onClick={toggleOpen}>
+        <S.ParentItem
+          isSelected={isSelected}
+          onClick={toggleOpen}
+          onContextMenu={(e) => handleOnContextMenu(e, node)}
+        >
           {
-            node.children && <>
-            {
-              isOpen
-                ? <S.DownArrow src={DownArrowIcon}/>
-                : <S.RightArrow src={RightArrowIcon}/>
-            }
-            </>
+            node.children && <S.Arrow src={RightArrowIcon} style={arrowStyle}/>
           }
           {node.title}
-          {/* {node.children && <span>{isOpen ? '-' : '+'}</span>} */}
         </S.ParentItem>
       </S.ItemWrapper>
       {isOpen && node.children && (
         <S.ChildBlock style={{ marginLeft: 16 }}>
           <S.LeftSeparator/>
           {node.children.map(child => (
-            <TreeNode key={child.id} node={child} onSelect={onSelect}/>
+            <TreeNode
+              key={child.id}
+              node={child}
+              onSelect={onSelect}
+              menuItemSelected={menuItemSelected}
+              handleOnContextMenu={handleOnContextMenu}
+            />
           ))}
         </S.ChildBlock>
       )}
@@ -52,11 +70,14 @@ const TreeMenu = ({
     minWidth,
     maxWidth,
     onWidthChange,
+    menuItemSelected,
     handleCreateFolder,
+    handleOnContextMenu,
     handleCreateNote,
     data,
     onSelect,
   }) => {
+
   const [isResizing, setIsResizing] = useState(false)
   const [creatingFolder, setCreatingFolder] = useState(false)
   const [newFolderName, setNewFolderName] = useState('')
@@ -128,7 +149,6 @@ const TreeMenu = ({
     }
   }
 
-
   return (
     <S.TreeMenuBlock width={width}>
       <S.ButtonWrapper>
@@ -143,6 +163,8 @@ const TreeMenu = ({
       <S.NotesFoldersBlock>
         {data?.children?.map(node => (
           <TreeNode
+            handleOnContextMenu={handleOnContextMenu}
+            menuItemSelected={menuItemSelected}
             key={node.id}
             node={node}
             onSelect={onSelect}
@@ -195,6 +217,7 @@ const Home = () => {
   const [data, setData] = useState({})
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [menuItemSelected, setMenuItemSelected] = useState(null)
   const minWidth = 20
   const maxWidth = 500
 
@@ -337,6 +360,68 @@ const Home = () => {
     }))
   }
 
+  const contextMenuRef = useRef(null)
+
+  const [contextMenu, setContextMenu] = useState({
+    position: {
+      x: 0,
+      y: 0,
+    },
+    toggled: false
+  })
+
+  const handleOnContextMenu = (e, rightClickedItem) => {
+    e.preventDefault()
+    const contextMenuAttr = contextMenuRef.current.getBoundingClientRect()
+
+    const isLeft = e.clientX < window?.innerWidth / 2
+
+    let x
+    let y = e.clientY
+
+    if (isLeft) {
+      x = e.clientX
+    } else {
+      x = e.clientX - contextMenuAttr.width
+    }
+
+    setContextMenu({
+      position: {
+        x,
+        y
+      },
+      toggled: true
+    })
+    setMenuItemSelected(rightClickedItem)
+    console.log(menuItemSelected)
+  }
+  
+  const resetContextMenu = () => {
+    setMenuItemSelected(null)
+    setContextMenu({
+      position: {
+        x: 0,
+        y: 0,
+      },
+      toggled: false,
+    });
+    console.log(menuItemSelected)
+  };
+
+  useEffect(() => {
+    function handler(e) {
+      if (contextMenuRef.current) {
+        if (!contextMenuRef.current.contains(e.target)){
+          resetContextMenu()
+        }
+      }
+    }
+    document.addEventListener('click', handler)
+    return () => {
+      document.removeEventListener('click', handler)
+    }
+  })
+
   return (
     <>
       {isLoading ? (
@@ -358,13 +443,47 @@ const Home = () => {
       </div>
      ) : (
       <S.Container>
+        <ContextMenu
+          contextMenuRef={contextMenuRef}
+          isToggled={contextMenu.toggled}
+          positionX={contextMenu.position.x}
+          positionY={contextMenu.position.y}
+          buttons={[
+            {
+              text: 'Open in new tab',
+              icon: <S.ContextMenuIcon src={NewTabIcon}/>,
+              onClick: () => alert('hello'),
+              isSpacer: false,
+            },
+            {
+              text: 'Rename',
+              icon: <S.ContextMenuIcon src={RenameIcon}/>,
+              onClick: () => alert('wow'),
+              isSpacer: false,
+            },
+            {
+              text: '',
+              icon: null,
+              onClick: () => null,
+              isSpacer: true,
+            },
+            {
+              text: 'Delete',
+              icon: <S.ContextMenuIcon src={DeleteIconIcon}/>,
+              onClick: () => alert('wow'),
+              isSpacer: false,
+            },
+          ]}
+        />
         <TreeMenu
           width={width}
           minWidth={minWidth}
           maxWidth={maxWidth}
+          menuItemSelected={menuItemSelected}
           onWidthChange={handleWidthChange}
           handleCreateFolder={handleCreateFolder}
           handleCreateNote={handleCreateNote}
+          handleOnContextMenu={handleOnContextMenu}
           data={data}
           onSelect={handleNoteSelect}
         />

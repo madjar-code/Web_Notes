@@ -137,21 +137,26 @@ export const ParentItem = styled.div`
   padding: 5px;
   padding-left: 15px;
   position: relative;
+  background-color: ${props =>
+    props.isSelected ? '#333333' : 'transparent'
+  };
   
   &:hover {
     background-color: #333333;
   }
+
+  ${props =>
+    props.isSelected &&
+    `
+      box-shadow: 0 0 0 2px #666666;
+    `
+  }
 `
 
-export const RightArrow = styled.img`
+export const Arrow = styled.img`
   position: absolute;
   top: 9px;
   left: 5px;
-`
-
-export const DownArrow = styled(RightArrow)`
-  top: 11px;
-  left: 2px;
 `
 
 export const ChildBlock = styled.div`
@@ -201,4 +206,7 @@ export const DescriptionForm = styled.textarea`
   min-height: 500px;
   height: auto;
   overflow-y: auto;
+`
+
+export const ContextMenuIcon = styled.img`
 `
