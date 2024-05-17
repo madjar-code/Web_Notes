@@ -5,7 +5,7 @@ from .views import (
     CreateNoteView,
     DeleteNoteView,
     DeleteFolderView,
-    # delete_item,
+    delete_item,
 )
 
 
@@ -18,5 +18,5 @@ urlpatterns = [
     path('notes/', CreateNoteView.as_view(), name='create_note'),
     path('notes/delete/<str:id>/', DeleteNoteView.as_view(), name='delete_note'),
     path('folders/delete/<str:id>/', DeleteFolderView.as_view(), name='delete_folder'),
-    # path('items/delete/<str:id>/', delete_item, name='delete_item'),
+    path('items/delete/<str:id>/', delete_item, name='delete_item'),
 ]

@@ -130,3 +130,37 @@ class DeleteFolderView(GenericAPIView):
             {'message': 'Deletion complete'},
             status.HTTP_204_NO_CONTENT,
         )
+
+
+@api_view(['DELETE'])
+def delete_item(request: Request, id: UUID) -> Response:
+    """
+    Deletes a note or folder based on the provided ID.
+
+    Arguments:
+        request: The incoming DELETE request.
+        id: The ID of the note or folder to be deleted.
+
+    Returns:
+        A JSON response with a success message on deletion (204 No Content)
+        or an error message (404 Not Found or 400 Bad Request).
+    """
+    note = Note.active_objects.filter(id=id).first()
+    folder = Folder.active_objects.filter(id=id).first()
+    item: Optional[Folder | Note] = note or folder
+
+
+    if not item:
+        return Response(
+            {'error': 'No item with given `id`'},
+            status.HTTP_404_NOT_FOUND,
+        )
+
+    if not isinstance(item, (Note, Folder)):
+        raise ValidationError({'error': 'Invalid item type'})
+
+    item.soft_delete()
+    return Response(
+        {'message': 'Deletion complete'},
+        status.HTTP_204_NO_CONTENT,
+    )
