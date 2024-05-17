@@ -1,15 +1,19 @@
 from uuid import UUID
+from typing import Optional
 from rest_framework import status
+from rest_framework.decorators import api_view
 from rest_framework.generics import (
     RetrieveAPIView,
     CreateAPIView,
+    GenericAPIView,
 )
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from notes.models import Folder
+from notes.models import Folder, Note
 from .serializers import (
     FolderTreeSerializer,
     CreateFolderSerializer,
@@ -87,4 +91,42 @@ class CreateNoteView(CreateAPIView):
         return Response(
             serializer.data,
             status.HTTP_200_OK,
+        )
+
+
+class DeleteNoteView(GenericAPIView):
+    # permission_classes = (IsAuthenticated,)
+    queryset = Note.active_objects.all()
+
+    @swagger_auto_schema(operation_id='delete_note')
+    def delete(self, request: Request, id: UUID) -> Response:
+        note: Note = self.queryset.filter(id=id).first()
+        if not note:
+            return Response(
+                {'error': 'No note with given `id`'},
+                status.HTTP_404_NOT_FOUND,
+            )
+        note.soft_delete()
+        return Response(
+            {'message': 'Deletion complete'},
+            status.HTTP_204_NO_CONTENT,
+        )
+
+
+class DeleteFolderView(GenericAPIView):
+    # permission_classes = (IsAuthenticated,)
+    queryset = Folder.active_objects.all()
+
+    @swagger_auto_schema(operation_id='delete_folder')
+    def delete(self, request: Request, id: UUID) -> Response:
+        folder: Note = self.queryset.filter(id=id).first()
+        if not folder:
+            return Response(
+                {'error': 'No folder with given `id`'},
+                status.HTTP_404_NOT_FOUND,
+            )
+        folder.soft_delete()
+        return Response(
+            {'message': 'Deletion complete'},
+            status.HTTP_204_NO_CONTENT,
         )
