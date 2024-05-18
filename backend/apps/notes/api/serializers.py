@@ -1,10 +1,19 @@
-# from rest_framework import serializers
+from rest_framework import serializers
 from rest_framework.serializers import (
+    Serializer,
     ModelSerializer,
     SerializerMethodField,
 )
 from drf_yasg.utils import swagger_serializer_method
 from notes.models import Note, Folder
+
+
+class MessageResponseSerializer(Serializer):
+    message = serializers.CharField()
+
+
+class ErrorResponseSerializer(Serializer):
+    error = serializers.CharField()
 
 
 class NoteTreeSerializer(ModelSerializer):
@@ -71,3 +80,14 @@ class CreateNoteSerializer(ModelSerializer):
             'owner',
         )
         read_only_fields = ('id',)
+
+
+class UpdateTitleSerializer(Serializer):
+    id = serializers.UUIDField(format='hex_verbose')
+    title = serializers.CharField(max_length=255)
+
+
+class UpdateTitlesRequestSerializer(Serializer):
+    updates = serializers.ListField(
+        child=UpdateTitleSerializer()
+    )
