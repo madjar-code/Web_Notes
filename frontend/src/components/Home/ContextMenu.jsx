@@ -22,6 +22,7 @@ const ContextMenu = ({
         buttons.map((button, index) => {
           function handleClick(e) {
             e.stopPropagation()
+            console.log(rightClickItem)
             button.onClick(e, rightClickItem)
           }
 

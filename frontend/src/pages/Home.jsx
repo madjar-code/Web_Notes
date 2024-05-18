@@ -268,6 +268,38 @@ const Home = () => {
     }
   }
 
+  const handleDeleteItem = async (id) => {
+    const updatedData = removeItemById(data, id)
+    setData(updatedData)
+    setMenuItemSelected(null)
+    resetContextMenu()
+
+    try {
+      const response = await fetch(
+        `/api/v1/items/delete/${id}`, {
+          method: 'DELETE',
+        }
+      )
+      if (response.status != 204){
+        console.log('Failed to delete item')
+      }
+    } catch {
+      console.error('Error deleting item:', error)
+    }
+  }
+
+  const removeItemById = (node, id) => {
+    if (!node) return null;
+    if (node.id === id) return null;
+
+    if (node.children && node.children.length > 0) {
+      node.children = node.children
+        .map(child => removeItemById(child, id))
+        .filter(child => child !== null);
+    }
+    return node;
+  };
+
   const handleCreateNote = async (newNoteName) => {
     if (!newNoteName) return;
 
@@ -470,7 +502,7 @@ const Home = () => {
             {
               text: 'Delete',
               icon: <S.ContextMenuIcon src={DeleteIconIcon}/>,
-              onClick: () => alert('wow'),
+              onClick: () => handleDeleteItem(menuItemSelected.id),
               isSpacer: false,
             },
           ]}
