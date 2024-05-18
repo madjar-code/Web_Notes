@@ -32,7 +32,7 @@ class SoftDeletionAdmin(ModelAdmin):
         queryset.update(is_active=False)
         messages.success(
             request,
-            Messages.DELETE_COMPLETE
+            Messages.DELETE_COMPLETE.value
         )
 
     def restore(
@@ -43,7 +43,7 @@ class SoftDeletionAdmin(ModelAdmin):
         queryset.update(is_active=True)
         messages.success(
             request,
-            Messages.RESTORE_COMPLETE
+            Messages.RESTORE_COMPLETE.value
         )
 
     soft_delete.short_description = 'Soft Deletion'
