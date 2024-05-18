@@ -1,5 +1,5 @@
 from uuid import UUID
-from typing import Optional
+from typing import Optional, Dict, List
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.generics import (
@@ -18,6 +18,9 @@ from .serializers import (
     FolderTreeSerializer,
     CreateFolderSerializer,
     CreateNoteSerializer,
+    MessageResponseSerializer,
+    ErrorResponseSerializer,
+    UpdateTitlesRequestSerializer,
 )
 
 
@@ -149,7 +152,6 @@ def delete_item(request: Request, id: UUID) -> Response:
     folder = Folder.active_objects.filter(id=id).first()
     item: Optional[Folder | Note] = note or folder
 
-
     if not item:
         return Response(
             {'error': 'No item with given `id`'},
@@ -163,4 +165,54 @@ def delete_item(request: Request, id: UUID) -> Response:
     return Response(
         {'message': 'Deletion complete'},
         status.HTTP_204_NO_CONTENT,
+    )
+
+
+@swagger_auto_schema(
+    method='put',
+    request_body=UpdateTitlesRequestSerializer,
+    responses={
+        200: MessageResponseSerializer,
+        400: ErrorResponseSerializer
+    }
+)
+@api_view(['PUT'])
+def update_titles(request: Request) -> Response:
+    updates: Dict[List] = request.data.get('updates', [])
+
+    if not isinstance(updates, list):
+        return Response(
+            {'error': 'Invalid data format, expected a list of updated.'},
+            status.HTTP_400_BAD_REQUEST,
+        )
+
+    for update in updates:
+        item_id = update.get('id')
+        new_title = update.get('title')
+
+        print(new_title)
+
+        if not item_id or not new_title:
+            continue
+
+        try:
+            note = Note.objects.filter(id=item_id).first()
+            if note:
+                note.title = new_title
+                note.save()
+                continue
+
+            folder = Folder.objects.filter(id=item_id).first()
+            if folder:
+                folder.title = new_title
+                folder.save()
+
+        except Exception as e:
+            return Response(
+                {'error': f'Failed to update item with id {item_id}: {str(e)}'},
+                status.HTTP_400_BAD_REQUEST,
+            )
+    return Response(
+        {'message': 'Titles have been updated'},
+        status.HTTP_200_OK,
     )
