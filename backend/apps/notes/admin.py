@@ -1,10 +1,10 @@
 from django.contrib import admin
-from common.mixins.admin import ReadOnlyFieldsAdmin
+from common.mixins.admin import BaseAdmin
 from .models import Note, Folder
 
 
 @admin.register(Note)
-class NoteAdmin(ReadOnlyFieldsAdmin):
+class NoteAdmin(BaseAdmin):
     list_display = (
         'title',
         'owner',
@@ -23,7 +23,7 @@ class NoteAdmin(ReadOnlyFieldsAdmin):
 
 
 @admin.register(Folder)
-class FolderAdmin(ReadOnlyFieldsAdmin):
+class FolderAdmin(BaseAdmin):
     list_display = (
         'title',
         'owner',
