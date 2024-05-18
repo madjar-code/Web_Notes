@@ -40,10 +40,10 @@ class FolderTreeSerializer(ModelSerializer):
         read_only_fields = fields
 
     def get_children(self, instance: Folder):
-        nested_folders = instance.children.filter(is_active=True)
+        nested_folders = instance.children.filter(is_active=True).order_by('title')
         folder_serializer = self.__class__(nested_folders, many=True)
 
-        notes = instance.notes.filter(is_active=True)
+        notes = instance.notes.filter(is_active=True).order_by('title')
         note_serializer = NoteTreeSerializer(notes, many=True)
 
         return folder_serializer.data + note_serializer.data
