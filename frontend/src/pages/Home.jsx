@@ -22,6 +22,7 @@ const Home = () => {
   const [error, setError] = useState(null)
   const [selectedNote, setSelectedNote] = useState(null)
   const [menuItemSelected, setMenuItemSelected] = useState(null)
+  const [renameMenuItem, setRenameMenuItem] = useState(null)
   const contextMenuRef = useRef(null)
   const [contextMenu, setContextMenu] = useState({
     position: {
@@ -192,7 +193,7 @@ const Home = () => {
         }
       )
       if (response.status !== 204){
-        console.log('Failed to delete item')
+        console.error('Failed to delete item')
       }
     } catch {
       console.error('Error deleting item:', error)
@@ -200,12 +201,20 @@ const Home = () => {
   }
 
   const handleNoteSelect = (note) => {
+    setMenuItemSelected(null)
+    resetContextMenu()
     setSelectedNote(note)
   }
 
   const handleWidthChange = (newWidth) => {
     setWidth(newWidth)
-  };
+  }
+
+  const handleRenameItem = (item) => {
+    setMenuItemSelected(null)
+    resetContextMenu()
+    setRenameMenuItem(item)
+  }
 
   const handleDescriptionChange = (e) => {
     const { value } = e.target
@@ -239,7 +248,6 @@ const Home = () => {
       toggled: true
     })
     setMenuItemSelected(rightClickedItem)
-    console.log(menuItemSelected)
   }
   
   const resetContextMenu = () => {
@@ -251,9 +259,57 @@ const Home = () => {
       },
       toggled: false,
     });
-    console.log(menuItemSelected)
+    // console.log(menuItemSelected)
   };
 
+
+  const handleRenameKeyDown = async (e) => {
+    if (e.key === 'Enter') {
+      const updatedData = { ...data }
+      const renameNode = (node, id, newTitle) => {
+        if (node.id === id) {
+          node.title = newTitle
+        } else if (node.children) {
+          node.children = node.children.map((child) => renameNode(child, id, newTitle))
+        }
+        return node
+      }
+      renameNode(
+        updatedData,
+        renameMenuItem.id,
+        renameMenuItem.title
+      )
+      setData(updatedData)
+      setRenameMenuItem(null)
+
+      try {
+        await fetch(`api/v1/items/update-titles/`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            updates: [
+              {
+                id: renameMenuItem.id,
+                title: renameMenuItem.title
+              }
+            ]
+          })
+        }
+        )
+      } catch (error){
+        console.error('Error renaming item:', error)
+      }
+    }
+  }
+
+  const handleRenameChange = (e) => {
+    setRenameMenuItem((prev) => ({
+      ...prev,
+      title: e.target.value,
+    }))
+  }
 
   return (
     <>
@@ -269,16 +325,17 @@ const Home = () => {
           positionX={contextMenu.position.x}
           positionY={contextMenu.position.y}
           buttons={[
-            {
+            menuItemSelected && menuItemSelected.children
+            ? null : {
               text: 'Open in new tab',
               icon: <S.ContextMenuIcon src={NewTabIcon}/>,
-              onClick: () => alert('hello'),
+              onClick: () => handleNoteSelect(menuItemSelected),
               isSpacer: false,
             },
             {
               text: 'Rename',
               icon: <S.ContextMenuIcon src={RenameIcon}/>,
-              onClick: () => alert('wow'),
+              onClick: () => handleRenameItem(menuItemSelected),
               isSpacer: false,
             },
             {
@@ -306,6 +363,9 @@ const Home = () => {
           handleOnContextMenu={handleOnContextMenu}
           data={data}
           onSelect={handleNoteSelect}
+          renameMenuItem={renameMenuItem}
+          handleRenameKeyDown={handleRenameKeyDown}
+          handleRenameChange={handleRenameChange}
         />
         {
           selectedNote && (

@@ -18,6 +18,9 @@ const TreeMenu = ({
   handleCreateNote,
   data,
   onSelect,
+  renameMenuItem,
+  handleRenameKeyDown,
+  handleRenameChange,
 }) => {
 
 const [isResizing, setIsResizing] = useState(false)
@@ -110,6 +113,9 @@ return (
           key={node.id}
           node={node}
           onSelect={onSelect}
+          renameMenuItem={renameMenuItem}
+          handleRenameKeyDown={handleRenameKeyDown}
+          handleRenameChange={handleRenameChange}
         />
       ))}
       {creatingFolder && (
