@@ -20,6 +20,7 @@ const ContextMenu = ({
     >
       {
         buttons.map((button, index) => {
+          if (!button) return null
           function handleClick(e) {
             e.stopPropagation()
             console.log(rightClickItem)
