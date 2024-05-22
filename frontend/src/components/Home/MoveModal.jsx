@@ -6,14 +6,15 @@ const MoveModal = ({
     isOpen,
     onClose,
     data,
-    onMove
+    onMove,
+    moveItem,
   }) => {
   const [searchFolder, setSearchFolder] = useState('')
 
   const collectAllFolders = (node, folderList = []) => {
     if (node.children && node.children.length > 0) {
       node.children.forEach((child) => {
-        if (child.children) {
+        if (child.children && child.id !== moveItem?.id) {
           folderList.push(child)
           collectAllFolders(child, folderList)
         }

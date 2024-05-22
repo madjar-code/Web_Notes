@@ -412,6 +412,7 @@ const Home = () => {
           onClose={() => setIsMoveModalOpen(false)}
           data={data}
           onMove={handleFolderMove}
+          moveItem={moveItem}
         />
         <TreeMenu
           width={width}
