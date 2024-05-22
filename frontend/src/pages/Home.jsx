@@ -4,15 +4,17 @@ import {
   useRef
 } from "react";
 import { Circles } from 'react-loader-spinner'
-import ContextMenu from "../components/Home/ContextMenu";
 
 import * as S from './Home.styled'
 
 import TreeMenu from "../components/Home/TreeMenu";
+import ContextMenu from "../components/Home/ContextMenu";
+import MoveModal from "../components/Home/MoveModal";
 
 import DeleteIconIcon from '../assets/icons/DeleteIcon.svg'
 import NewTabIcon from '../assets/icons/NewTabIcon.svg'
 import RenameIcon from '../assets/icons/RenameIcon.svg'
+import MoveToIcon from '../assets/icons/MoveToIcon.svg'
 
 
 const Home = () => {
@@ -23,6 +25,8 @@ const Home = () => {
   const [selectedNote, setSelectedNote] = useState(null)
   const [menuItemSelected, setMenuItemSelected] = useState(null)
   const [renameMenuItem, setRenameMenuItem] = useState(null)
+  const [moveItem, setMoveItem] = useState(null)
+  const [isMoveModalOpen, setIsMoveModalOpen] = useState(false)
   const contextMenuRef = useRef(null)
   const [contextMenu, setContextMenu] = useState({
     position: {
@@ -262,7 +266,6 @@ const Home = () => {
     // console.log(menuItemSelected)
   };
 
-
   const handleRenameKeyDown = async (e) => {
     if (e.key === 'Enter') {
       const updatedData = { ...data }
@@ -311,6 +314,53 @@ const Home = () => {
     }))
   }
 
+  const handleMoveItem = (item) => {
+    setMoveItem(item)
+    setIsMoveModalOpen(true)
+  }
+
+  const handleFolderMove = async (folderId) => {
+    const updatedData = { ...data }
+  
+    const moveNode = (node, id) => {
+      if (node.children){
+        node.children = node.children.filter((child) => child.id !== id)
+        node.children.forEach((child) => moveNode(child, id))
+      }
+      return node
+    }
+    moveNode(updatedData, moveItem?.id)
+
+    const addToFolder = (node, id, newNode) => {
+      if (node.id === id) {
+        node.children = node.children || []
+        node.children.push(newNode)
+      } else if (node.children) {
+        node.children.forEach((child) => addToFolder(child, id, newNode))
+      }
+      return node
+    }
+    addToFolder(updatedData, folderId, moveItem)
+    setData(updatedData)
+    setMoveItem(null)
+
+    try {
+      const response = await fetch(
+        `/api/v1/items/move/${moveItem?.id}/${folderId}/`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        }
+      )
+      if (!response.ok) {
+        console.error('Failed to move item')
+      }
+    } catch {
+      console.error('Failed to move item')
+    }
+  }
+
   return (
     <>
       {isLoading ? (
@@ -333,6 +383,11 @@ const Home = () => {
               isSpacer: false,
             },
             {
+              text: 'Move to...',
+              icon: <S.ContextMenuIcon src={MoveToIcon}/>,
+              onClick: () => handleMoveItem(menuItemSelected),
+            },
+            {
               text: 'Rename',
               icon: <S.ContextMenuIcon src={RenameIcon}/>,
               onClick: () => handleRenameItem(menuItemSelected),
@@ -351,6 +406,12 @@ const Home = () => {
               isSpacer: false,
             },
           ]}
+        />
+        <MoveModal
+          isOpen={isMoveModalOpen}
+          onClose={() => setIsMoveModalOpen(false)}
+          data={data}
+          onMove={handleFolderMove}
         />
         <TreeMenu
           width={width}
