@@ -190,8 +190,6 @@ def update_titles(request: Request) -> Response:
         item_id = update.get('id')
         new_title = update.get('title')
 
-        print(new_title)
-
         if not item_id or not new_title:
             continue
 
@@ -214,5 +212,62 @@ def update_titles(request: Request) -> Response:
             )
     return Response(
         {'message': 'Titles have been updated'},
+        status.HTTP_200_OK,
+    )
+
+
+@swagger_auto_schema(
+    method='put',
+    manual_parameters=[
+        openapi.Parameter(
+            'item_id',
+            openapi.IN_PATH,
+            description='ID of the item to be moved',
+            type=openapi.TYPE_STRING
+        ),
+        openapi.Parameter(
+            'new_parent_id',
+            openapi.IN_PATH,
+            description='ID of the new parent folder',
+            type=openapi.TYPE_STRING
+        )
+    ],
+    responses={
+        200: MessageResponseSerializer,
+        400: ErrorResponseSerializer
+    }
+)
+@api_view(['PUT'])
+def move_item(request, item_id: UUID, new_parent_id: UUID) -> Response:
+    try:
+        note: Note = Note.active_objects.filter(id=item_id).first()
+        folder: Folder = Folder.active_objects.filter(id=item_id).first()
+        if not note and not folder:
+            return Response(
+                {'error': f'Item with id {item_id} not found.'},
+                status.HTTP_400_BAD_REQUEST,
+            )
+
+        new_parent = Folder.active_objects.filter(id=new_parent_id).first()
+        if not new_parent:
+            return Response(
+                {'error': f'Folder with id {new_parent_id} not found.'},
+                status.HTTP_400_BAD_REQUEST,
+            )
+        if note:
+            note.folder = new_parent
+            note.save()
+        if folder:
+            folder.parent = new_parent
+            folder.save()
+
+    except Exception as e:
+        return Response(
+            {'error': f'Failed to move item with id {item_id}: {str(e)}'},
+            status.HTTP_400_BAD_REQUEST,
+        )
+
+    return Response(
+        {'message': 'Item has been moved'},
         status.HTTP_200_OK,
     )

@@ -6,6 +6,7 @@ from .views import (
     DeleteNoteView,
     DeleteFolderView,
     delete_item,
+    move_item,
     update_titles,
 )
 
@@ -21,4 +22,5 @@ urlpatterns = [
     path('folders/delete/<str:id>/', DeleteFolderView.as_view(), name='delete_folder'),
     path('items/delete/<str:id>/', delete_item, name='delete_item'),
     path('items/update-titles/', update_titles, name='update_titles'),
+    path('items/move/<str:item_id>/<str:new_parent_id>/', move_item, name='move_item'),
 ]
