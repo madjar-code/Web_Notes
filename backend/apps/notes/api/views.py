@@ -238,7 +238,11 @@ def update_titles(request: Request) -> Response:
     }
 )
 @api_view(['PUT'])
-def move_item(request, item_id: UUID, new_parent_id: UUID) -> Response:
+def move_item(
+        request: Request,
+        item_id: UUID,
+        new_parent_id: UUID
+    ) -> Response:
     try:
         note: Note = Note.active_objects.filter(id=item_id).first()
         folder: Folder = Folder.active_objects.filter(id=item_id).first()
