@@ -1,6 +1,5 @@
 import styled from 'styled-components'
 
-
 export const Container = styled.div`
   width: 100vw;
   height: 100vh;
@@ -17,6 +16,17 @@ export const Label = styled.h2`
   text-align: center;
   font-weight: var(--semi-bold);
   font-size: 40px;
+`
+
+export const LoginErrorMessage = styled.div`
+  width: 100%;
+  /* margin-top: 10px; */
+  margin-top: 11px;
+  margin-bottom: -24px;
+  font-size: 12px;
+  font-weight: var(--medium);
+  text-align: center;
+  color: #F12727;
 `
 
 export const GoogleIcon = styled.img`
