@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Provider } from "react-redux";
+import { AuthProvider } from "./context/AuthContext";
 import store from "./store";
 import Layout from "./hocs/Layout";
 import Home from './pages/Home'
@@ -15,15 +16,17 @@ const App = () => (
   <Provider store={store}>
     <Router>
       <Layout>
-        <Routes>
-          {/* <Route exact path="/" element={<Home/>} /> */}
-          <Route path="/" element={<Home/>} />
-          <Route path="/login" element={<Login/>} />
-          <Route path="/signup" element={<Signup/>} />
-          <Route path="/reset-password" element={<ResetPassword/>} />
-          <Route path="/reset-password/confirm" element={<ResetPasswordConfirm/>}/>
-          {/* <Route path="/activate/:uid/:token" element={<Activate/>} /> */}
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            {/* <Route exact path="/" element={<Home/>} /> */}
+            <Route path="/" element={<Home/>} />
+            <Route path="/login" element={<Login/>} />
+            <Route path="/signup" element={<Signup/>} />
+            <Route path="/reset-password" element={<ResetPassword/>} />
+            <Route path="/reset-password/confirm" element={<ResetPasswordConfirm/>}/>
+            {/* <Route path="/activate/:uid/:token" element={<Activate/>} /> */}
+          </Routes>
+        </AuthProvider>
       </Layout>
     </Router>
   </Provider>
