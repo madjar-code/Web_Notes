@@ -50,6 +50,19 @@ export const AuthProvider = ({ children }) => {
     return response.status
   }
 
+  const signupUser = async (credentials) => {
+    const response = await fetch('/api/v1/auth/users/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(credentials)
+    })
+
+    const data = await response.json()
+    return { data: data, status: response.status }
+  }
+
   const updateToken = async () => {
     const response = await fetch('/api/v1/auth/jwt/refresh/', {
       method: 'POST',
@@ -93,6 +106,7 @@ export const AuthProvider = ({ children }) => {
     authTokens: authTokens,
     loginUser: loginUser,
     logoutUser: logoutUser,
+    signupUser: signupUser,
   }
 
   useEffect(() => {
