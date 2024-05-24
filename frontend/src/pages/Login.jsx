@@ -41,6 +41,13 @@ const Login = () => {
     )
   }
 
+  const areFieldsFilled = () => {
+    return (
+      loginCredentials.email &&
+      loginCredentials.password
+    )
+  }
+
   return (
     <S.Container>
       <S.LoginBlock>
@@ -60,15 +67,19 @@ const Login = () => {
           type='password'
           onChange={handlePasswordChange}
         />
-        <S.LoginButton onClick={handleLoginClick}>
+        <S.LoginButton
+          onClick={handleLoginClick}
+          disabled={!areFieldsFilled()}
+          style={{ opacity: !areFieldsFilled() ? 0.4 : 1 }}
+        >
           Log in!
         </S.LoginButton>
         <S.ResetLabel>
-          <S.Link>Reset Password</S.Link>
+          <S.Link onClick={() => navigate('/reset-password')}>Reset Password</S.Link>
         </S.ResetLabel>
         <S.NoAccountLabel>
           No account?
-          <S.Link> Create!</S.Link>
+          <S.Link onClick={() => navigate('/signup')}> Create!</S.Link>
         </S.NoAccountLabel>
       </S.LoginBlock>
     </S.Container>
