@@ -44,6 +44,16 @@ export const OrLabel = styled.h4`
   margin-top: 35px;
 `
 
+export const ErrorMessage = styled.div`
+  width: 420px;
+  margin-top: 1px;
+  text-align: center;
+  position: absolute;
+  font-size: 12px;
+  font-weight: var(--semi-bold);
+  color: #F12727;
+`
+
 export const FullNameInput = styled.input`
   margin-top: 35px;
   width: 420px;
