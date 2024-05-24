@@ -1,7 +1,12 @@
-import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import React, { useContext } from "react";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 import { Provider } from "react-redux";
-import { AuthProvider } from "./context/AuthContext";
+import AuthContext, { AuthProvider } from "./context/AuthContext";
 import store from "./store";
 import Layout from "./hocs/Layout";
 import Home from './pages/Home'
@@ -12,6 +17,13 @@ import ResetPasswordConfirm from "./pages/ResetPasswordConfirm";
 
 import './App.css'
 
+
+const PrivateRoute = ({ children }) => {
+  const { authTokens } = useContext(AuthContext)
+  return authTokens ? children : <Navigate to='/login'/>
+}
+
+
 const App = () => (
   <Provider store={store}>
     <Router>
@@ -19,11 +31,18 @@ const App = () => (
         <AuthProvider>
           <Routes>
             {/* <Route exact path="/" element={<Home/>} /> */}
-            <Route path="/" element={<Home/>} />
             <Route path="/login" element={<Login/>} />
             <Route path="/signup" element={<Signup/>} />
             <Route path="/reset-password" element={<ResetPassword/>} />
             <Route path="/reset-password/confirm" element={<ResetPasswordConfirm/>}/>
+            <Route
+              path="/"
+              element={
+                <PrivateRoute>
+                  <Home/>
+                </PrivateRoute>
+              }
+            />
             {/* <Route path="/activate/:uid/:token" element={<Activate/>} /> */}
           </Routes>
         </AuthProvider>
