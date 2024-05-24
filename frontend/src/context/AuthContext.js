@@ -101,12 +101,25 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('authTokens')
   }
 
+  const resetPassword = async (credentials) => {
+    const response = await fetch('/api/v1/auth/users/reset_password/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(credentials)
+    })
+    // const data = await response.json()
+    return response.status
+  }
+
   const contextData = {
     user: user,
     authTokens: authTokens,
     loginUser: loginUser,
     logoutUser: logoutUser,
     signupUser: signupUser,
+    resetPassword: resetPassword,
   }
 
   useEffect(() => {
