@@ -14,6 +14,16 @@ export const ResetPasswordConfirmBlock = styled.div`
   width: 420px;
 `
 
+export const ErrorMessage = styled.div`
+  width: 420px;
+  margin-top: 1px;
+  text-align: center;
+  position: absolute;
+  font-size: 12px;
+  font-weight: var(--semi-bold);
+  color: #F12727;
+`
+
 export const Label = styled.h2`
   text-align: center;
   font-weight: var(--semi-bold);
