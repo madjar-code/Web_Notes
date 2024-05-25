@@ -113,6 +113,17 @@ export const AuthProvider = ({ children }) => {
     return response.status
   }
 
+  const resetPasswordConfirm = async (credentials) => {
+    const response = await fetch('/api/v1/auth/users/reset_password_confirm/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(credentials)
+    })
+    return response.status
+  }
+
   const contextData = {
     user: user,
     authTokens: authTokens,
@@ -120,6 +131,7 @@ export const AuthProvider = ({ children }) => {
     logoutUser: logoutUser,
     signupUser: signupUser,
     resetPassword: resetPassword,
+    resetPasswordConfirm: resetPasswordConfirm,
   }
 
   useEffect(() => {
