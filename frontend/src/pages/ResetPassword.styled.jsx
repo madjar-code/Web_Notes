@@ -9,6 +9,39 @@ export const Container = styled.div`
   justify-content: center;
 `
 
+export const EmailSentBlock = styled.div`
+  align-self: center;
+  width: 375px;
+  text-align: center;
+`
+
+export const EmailSentText = styled.p`
+  margin-bottom: 20px;
+  font-size: 17px;
+  font-weight: var(--semi-bold);
+`
+
+export const BackLink = styled.a`
+  font-size: 16px;
+  font-weight: var(--semi-bold);
+  color: #276DF1;
+  text-align: center;
+  &:hover {
+    text-decoration: underline;
+  }
+`
+
+export const ErrorMessage = styled.div`
+  width: 100%;
+  /* margin-top: 10px; */
+  margin-top: 1px;
+  /* margin-bottom: -24px; */
+  font-size: 12px;
+  font-weight: var(--medium);
+  text-align: center;
+  color: #F12727;
+`
+
 export const ResetPasswordBlock = styled.div`
   margin-top: 180px;
   width: 420px;
