@@ -128,6 +128,8 @@ SIMPLE_JWT = {
     )
 }
 
+DOMAIN = env.str('DJOSER_DOMAIN', default='localhost:3000')
+
 # Djoser
 DJOSER = {
     'LOGIN_FIELD': 'email',
