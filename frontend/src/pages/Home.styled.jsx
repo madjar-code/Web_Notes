@@ -1,13 +1,5 @@
 import styled from 'styled-components'
 
-export const Container = styled.div`
-  width: 100vw;
-  height: 100vh;
-`
-
-export const Header = styled.div`
-`
-
 export const LoadingPage = styled.div`
   position: fixed;
   top: 0;
@@ -21,17 +13,129 @@ export const LoadingPage = styled.div`
   align-items: center;
 `
 
+export const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+`
+
+export const Header = styled.header`
+  height: 45px;
+  background-color: #282828;
+  flex-shrink: 0;
+  position: relative;
+`
+
+export const AccountButton = styled.div`
+  height: 30px;
+  width: 50px;
+  background-color: #333333;
+  border-radius: 15px;
+  user-select: none;
+  position: absolute;
+  right: 45px;
+  top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover{
+    background-color: #3e3e3e;
+  }
+`
+
+export const Avatar = styled.p`
+  margin-left: 3px;
+  background-color: #2E76FF;
+  width: 23px;
+  height: 23px;
+  border-radius: 11.5px;
+  text-align: center;
+  font-size: 14px;
+  padding-top: 3px;
+`
+
+export const OpenArrow = styled.img`
+  scale: 1.2;
+  margin-right: 8px;
+`
+
+export const AccountMenu = styled.div`
+  display: ${({ isOpen }) => (isOpen ? 'flex' : 'none')};
+  background-color: #2F2F2F;
+  width: 170px;
+  height: 90px;
+  position: absolute;
+  right: 45px;
+  top: 42.5px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
+  flex-direction: column;
+  justify-content: center;
+`
+
+export const TopWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
+export const AccountTextWrapper = styled.div`
+  margin-left: 8px;
+  width: 78px;
+`
+
+export const MenuAvatar = styled(Avatar)`
+  margin-left: 1px;
+`
+
+export const FullName = styled.p`
+  font-size: 13px;
+`
+
+export const Pointer = styled.p`
+  font-size: 12px;
+  color: #6f6f6f;
+`
+
+export const BottomWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+`
+
+export const LogoutButton = styled.button`
+  margin-top: 10px;
+  color: #F12727;
+  border: 1px solid #F12727;
+  font-size: 13px;
+  width: 110px;
+  height: 24px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color:#F12727;
+    color:#DDDDDD;
+  }
+`
+
+export const Content = styled.div`
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+`
+
 export const NoteDetailsBlock = styled.div`
-  /* background-color: aliceblue; */
   padding-top: 70px;
   display: flex;
   justify-content: center;
-  height: 100vh;
+  flex: 1;
+  overflow: auto;
 `
 
 export const NoteDetailsWrapper = styled.div`
-  /* background-color: aquamarine; */
-  /* max-width: 640px; */
   width: 800px;
   min-width: 400px;
   display: flex;
