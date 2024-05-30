@@ -158,15 +158,14 @@ export const TitleForm = styled.input`
 
 export const DescriptionForm = styled.textarea`
   resize: none;
-  /* background-color: red; */
   width: 100%;
   margin-top: 23px;
   font-size: 14px;
   font-weight: var(--medium);
-  min-height: 500px;
+  min-height: 100px;
   height: auto;
-  overflow-y: auto;
-`
+  overflow-y: hidden;
+`;
 
 export const ContextMenuIcon = styled.img`
 `

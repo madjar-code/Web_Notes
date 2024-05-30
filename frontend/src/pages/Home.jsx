@@ -261,6 +261,20 @@ const Home = () => {
     }))
   }
 
+  const descriptionRef = useRef(null);
+
+  const adjustTextareaHeight = () => {
+    const textarea = descriptionRef.current;
+    if (textarea) {
+      textarea.style.height = "auto";
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  };
+
+  useEffect(() => {
+    adjustTextareaHeight();
+  }, [selectedNote?.description]);
+
   const handleOnContextMenu = (e, rightClickedItem) => {
     e.preventDefault()
     const contextMenuAttr = contextMenuRef.current.getBoundingClientRect()
@@ -295,7 +309,6 @@ const Home = () => {
       },
       toggled: false,
     });
-    // console.log(menuItemSelected)
   };
 
   const handleRenameKeyDown = async (e) => {
@@ -347,6 +360,8 @@ const Home = () => {
   }
 
   const handleMoveItem = (item) => {
+    resetContextMenu()
+    setMenuItemSelected(item)
     setMoveItem(item)
     setIsMoveModalOpen(true)
   }
@@ -375,6 +390,7 @@ const Home = () => {
     addToFolder(updatedData, folderId, moveItem)
     setData(updatedData)
     setMoveItem(null)
+    setMenuItemSelected(null)
 
     try {
       const response = await fetch(
@@ -488,9 +504,11 @@ const Home = () => {
                 <S.NoteDetailsWrapper>
                   <S.TitleForm value={selectedNote.title}/>
                   <S.DescriptionForm
+                    ref={descriptionRef}
                     placeholder='Enter your text...'
                     value={selectedNote.description}
                     onChange={handleDescriptionChange}
+                    onInput={adjustTextareaHeight}
                   />
                 </S.NoteDetailsWrapper>
               </S.NoteDetailsBlock>
