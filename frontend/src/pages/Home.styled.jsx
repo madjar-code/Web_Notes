@@ -48,6 +48,7 @@ export const AccountButton = styled.div`
 `
 
 export const Avatar = styled.p`
+  user-select: none;
   margin-left: 3px;
   background-color: #2E76FF;
   width: 23px;
@@ -66,33 +67,36 @@ export const OpenArrow = styled.img`
 export const AccountMenu = styled.div`
   display: ${({ isOpen }) => (isOpen ? 'flex' : 'none')};
   background-color: #2F2F2F;
-  width: 170px;
+  width: 200px;
   height: 90px;
   position: absolute;
   right: 45px;
   top: 42.5px;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
   flex-direction: column;
-  justify-content: center;
 `
 
 export const TopWrapper = styled.div`
+  margin-top: 12.5px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  padding: 0 25px;
+  gap: 5px;
 `
 
 export const AccountTextWrapper = styled.div`
-  margin-left: 8px;
-  width: 78px;
 `
 
 export const MenuAvatar = styled(Avatar)`
-  margin-left: 1px;
 `
 
 export const FullName = styled.p`
   font-size: 13px;
+  max-width: 110px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
 `
 
 export const Pointer = styled.p`
@@ -103,14 +107,16 @@ export const Pointer = styled.p`
 export const BottomWrapper = styled.div`
   display: flex;
   justify-content: center;
+  align-items: center;
+
 `
 
 export const LogoutButton = styled.button`
-  margin-top: 10px;
+  margin-top: 12.5px;
   color: #F12727;
   border: 1px solid #F12727;
   font-size: 13px;
-  width: 110px;
+  width: 140px;
   height: 24px;
   cursor: pointer;
   transition: background-color 0.3s;
