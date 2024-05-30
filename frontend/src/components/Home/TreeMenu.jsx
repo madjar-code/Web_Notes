@@ -33,11 +33,13 @@ const [newNoteName, setNewNoteName] = useState('')
 const newFolderInput = useRef()
 
 const handleCreateFolderClick = () => {
+  setCreatingNote(false)
   setCreatingFolder(true)
   setNewFolderName('Untitled')
 }
 
 const handleCreateNoteClick = () => {
+  setCreatingFolder(false)
   setCreatingNote(true)
   setNewNoteName('Untitled')
 }
