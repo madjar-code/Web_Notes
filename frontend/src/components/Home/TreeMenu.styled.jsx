@@ -111,7 +111,7 @@ export const NewFolderInput = styled.input`
 `
 
 export const NewNoteWrapper = styled.div`
-  margin-top: 10px;
+  margin-top: 5px;
 `
 
 export const NewNoteInput = styled(NewFolderInput)`

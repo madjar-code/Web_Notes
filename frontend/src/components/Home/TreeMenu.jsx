@@ -85,6 +85,9 @@ const handleCreateFolderKeyDown = (e) => {
     setCreatingFolder(false)
     setNewFolderName('')
     handleCreateFolder(newFolderName)
+  } else if (e.key === 'Escape') {
+    setCreatingFolder(false)
+    setNewFolderName('')
   }
 }
 
@@ -93,6 +96,9 @@ const handleCreateNoteKeyDown = (e) => {
     setCreatingNote(false)
     setNewNoteName('')
     handleCreateNote(newNoteName)
+  } else if (e.key == 'Escape') {
+    setCreatingNote(false)
+    setNewNoteName('')
   }
 }
 
