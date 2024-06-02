@@ -123,6 +123,7 @@ const TreeMenu = ({
             onSelect={onSelect}
             renameMenuItem={renameMenuItem}
             handleRenameKeyDown={handleRenameKeyDown}
+            handleRenameChange={handleRenameChange}
           />
         ))}
         {creatingFolder && (
