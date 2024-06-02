@@ -409,21 +409,6 @@ const Home = () => {
     }
   }
 
-  // const [creationFolder, setCreationFolder] = useState(null)
-
-  // const handleCreateNoteInFolder = async (item) => {
-  //   setMenuItemSelected(null)
-  //   resetContextMenu()
-  //   setCreationFolder({
-  //     target: 'note',
-  //     folder: item,
-  //   })
-  // }
-
-  // const handleCreateNoteInFolderAPI = (item) => {
-  //   console.log('Creating note in folder:', item)
-  // }
-
   return (
     <>
       {isLoading ? (
@@ -470,14 +455,6 @@ const Home = () => {
                 onClick: () => handleNoteSelect(menuItemSelected),
                 isSpacer: false,
               },
-              // menuItemSelected && menuItemSelected.children
-              // ? {
-              //   text: 'Create Note',
-              //   icon: <S.ContextMenuIcon src={NewTabIcon}/>,
-              //   onClick: () => handleCreateNoteInFolder(menuItemSelected),
-              //   isSpacer: false,
-              // }
-              // : null,
               {
                 text: 'Move to...',
                 icon: <S.ContextMenuIcon src={MoveToIcon}/>,
@@ -525,10 +502,6 @@ const Home = () => {
             renameMenuItem={renameMenuItem}
             handleRenameKeyDown={handleRenameKeyDown}
             handleRenameChange={handleRenameChange}
-
-            // creationFolder={creationFolder}
-            // setCreationFolder={setCreationFolder}
-            // handleCreateNoteInFolderAPI={handleCreateNoteInFolderAPI}
           />
           {
             selectedNote && (
