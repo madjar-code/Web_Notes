@@ -67,6 +67,45 @@ class FolderTreeView(RetrieveAPIView):
         )
 
 
+class CurrentUserRootTreeView(RetrieveAPIView):
+    serializer_class = FolderTreeSerializer
+    queryset = Folder.active_objects.all()
+    permission_classes = (IsAuthenticated,)
+
+    @swagger_auto_schema(
+        operation_id='folder_tree_view',
+        responses={
+            status.HTTP_200_OK: openapi.Response(
+                description='Successful response',
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'id': openapi.Schema(type=openapi.TYPE_STRING),
+                        'title': openapi.Schema(type=openapi.TYPE_STRING),
+                        'children': openapi.Schema(
+                            type=openapi.TYPE_ARRAY,
+                            items=openapi.Schema(type=openapi.TYPE_OBJECT)
+                        )
+                    }
+                )
+            )
+        }
+    )
+    def get(self, request: Request) -> Response:
+        folder: Folder | None = self.queryset.filter(owner=request.user).first()
+        if not folder:
+            folder = Folder.active_objects.create(
+                owner=request.user,
+                title='Root Folder',
+                parent=None
+            )
+        serializer: FolderTreeSerializer = self.serializer_class(folder)
+        return Response(
+            serializer.data,
+            status.HTTP_200_OK,
+        )
+
+
 class CreateFolderView(CreateAPIView):
     serializer_class = CreateFolderSerializer
     # permission_classes = (IsAuthenticated,)
@@ -75,7 +114,7 @@ class CreateFolderView(CreateAPIView):
     def post(self, request: Request) -> Response:
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        serializer.save(owner=request.user)
         return Response(
             serializer.data,
             status.HTTP_200_OK,
@@ -90,7 +129,7 @@ class CreateNoteView(CreateAPIView):
     def post(self, request: Request) -> Response:
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        serializer.save(owner=request.user)
         return Response(
             serializer.data,
             status.HTTP_200_OK,
