@@ -23,7 +23,7 @@ const ContextMenu = ({
           if (!button) return null
           function handleClick(e) {
             e.stopPropagation()
-            console.log(rightClickItem)
+            // console.log(rightClickItem)
             button.onClick(e, rightClickItem)
           }
 
