@@ -52,10 +52,11 @@ const Home = () => {
 
       try {
         const response = await fetch(
-          '/api/v1/notes/1a1614f4-561b-4df6-9c2d-82c160af3740', {
+          '/api/v1/notes/root/', {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
+              'Authorization': `JWT ${authTokens.access}`
             }
           }
         )
@@ -85,26 +86,26 @@ const Home = () => {
     }
   })
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch(
-          '/api/v1/auth/users/me/', {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `JWT ${authTokens.access}` // Ensure you are passing the token
-            }
-          }
-        )
-        const userData = await response.json()
-        setCurrentUser(userData)
-      } catch (error) {
-        console.error('Error fetching user data:', error)
-      }
-    }
-    fetchUserData()
-  }, [authTokens.access])
+  // useEffect(() => {
+  //   const fetchUserData = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         '/api/v1/auth/users/me/', {
+  //           method: 'GET',
+  //           headers: {
+  //             'Content-Type': 'application/json',
+  //             'Authorization': `JWT ${authTokens.access}` // Ensure you are passing the token
+  //           }
+  //         }
+  //       )
+  //       const userData = await response.json()
+  //       setCurrentUser(userData)
+  //     } catch (error) {
+  //       console.error('Error fetching user data:', error)
+  //     }
+  //   }
+  //   fetchUserData()
+  // }, [authTokens.access])
 
   const handleCreateFolder = async (newFolderName) => {
     if (!newFolderName) return;
@@ -125,6 +126,7 @@ const Home = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `JWT ${authTokens.access}`
           },
           body: JSON.stringify({
             title: newFolderName,
@@ -176,6 +178,8 @@ const Home = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `JWT ${authTokens.access}`
+            
           },
           body: JSON.stringify({
             title: newNoteName,
