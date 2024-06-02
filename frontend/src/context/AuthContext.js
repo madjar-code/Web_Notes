@@ -138,7 +138,7 @@ export const AuthProvider = ({ children }) => {
     if (loading) {
       updateToken()
     }
-    const accessLifeInterval = 1000 * 60 * 60 
+    const accessLifeInterval = 1000 * 60
     const interval = setInterval(() => {
       if (authTokens) {
         updateToken()
