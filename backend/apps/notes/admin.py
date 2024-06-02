@@ -18,7 +18,7 @@ class NoteAdmin(BaseAdmin):
     search_fields = (
         'title',
         'body',
-        'owner',
+        'owner__email',
     )
 
 
@@ -39,5 +39,5 @@ class FolderAdmin(BaseAdmin):
     search_fields = (
         'title',
         'parent__title',
-        'owner',
+        'owner__email',
     )
