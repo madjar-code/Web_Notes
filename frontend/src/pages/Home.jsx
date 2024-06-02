@@ -269,7 +269,7 @@ const Home = () => {
       textarea.style.height = "auto";
       textarea.style.height = `${textarea.scrollHeight}px`;
     }
-  };
+  }
 
   useEffect(() => {
     adjustTextareaHeight();
@@ -309,7 +309,7 @@ const Home = () => {
       },
       toggled: false,
     });
-  };
+  }
 
   const handleRenameKeyDown = async (e) => {
     if (e.key === 'Enter') {
@@ -409,6 +409,21 @@ const Home = () => {
     }
   }
 
+  // const [creationFolder, setCreationFolder] = useState(null)
+
+  // const handleCreateNoteInFolder = async (item) => {
+  //   setMenuItemSelected(null)
+  //   resetContextMenu()
+  //   setCreationFolder({
+  //     target: 'note',
+  //     folder: item,
+  //   })
+  // }
+
+  // const handleCreateNoteInFolderAPI = (item) => {
+  //   console.log('Creating note in folder:', item)
+  // }
+
   return (
     <>
       {isLoading ? (
@@ -424,9 +439,13 @@ const Home = () => {
           </S.AccountButton>
           <S.AccountMenu isOpen={isAccountMenuOpen}>
             <S.TopWrapper>
-              <S.MenuAvatar>{currentUser?.first_name?.[0]}</S.MenuAvatar>
+              <S.MenuAvatar>
+                {currentUser?.first_name?.[0]}
+              </S.MenuAvatar>
               <S.AccountTextWrapper>
-                <S.FullName>{currentUser?.first_name} {currentUser?.last_name}</S.FullName>
+                <S.FullName>
+                  {currentUser?.first_name} {currentUser?.last_name}
+                </S.FullName>
                 <S.Pointer>You</S.Pointer>
               </S.AccountTextWrapper>
             </S.TopWrapper>
@@ -451,6 +470,14 @@ const Home = () => {
                 onClick: () => handleNoteSelect(menuItemSelected),
                 isSpacer: false,
               },
+              // menuItemSelected && menuItemSelected.children
+              // ? {
+              //   text: 'Create Note',
+              //   icon: <S.ContextMenuIcon src={NewTabIcon}/>,
+              //   onClick: () => handleCreateNoteInFolder(menuItemSelected),
+              //   isSpacer: false,
+              // }
+              // : null,
               {
                 text: 'Move to...',
                 icon: <S.ContextMenuIcon src={MoveToIcon}/>,
@@ -484,19 +511,24 @@ const Home = () => {
             moveItem={moveItem}
           />
           <TreeMenu
+            data={data}
             width={width}
             minWidth={minWidth}
             maxWidth={maxWidth}
+            onSelect={handleNoteSelect}
             menuItemSelected={menuItemSelected}
             onWidthChange={handleWidthChange}
             handleCreateFolder={handleCreateFolder}
             handleCreateNote={handleCreateNote}
             handleOnContextMenu={handleOnContextMenu}
-            data={data}
-            onSelect={handleNoteSelect}
+
             renameMenuItem={renameMenuItem}
             handleRenameKeyDown={handleRenameKeyDown}
             handleRenameChange={handleRenameChange}
+
+            // creationFolder={creationFolder}
+            // setCreationFolder={setCreationFolder}
+            // handleCreateNoteInFolderAPI={handleCreateNoteInFolderAPI}
           />
           {
             selectedNote && (
